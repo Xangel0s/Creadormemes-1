@@ -1,0 +1,910 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>
+      Generador de Memes Gratis Online - Crea y Descarga Memes Personalizados
+    </title>
+    <meta
+      name="description"
+      content="Generador de memes gratis online. Crea, personaliza y descarga memes fácilmente. Sin marcas de agua, sin registro. Compatible con móvil y PC. ¡Haz tus propios memes ahora!"
+    />
+    <meta
+      name="keywords"
+      content="generador de memes, memes online, crear memes, memes gratis, meme generator, descargar memes, memes personalizados, memes sin marca de agua"
+    />
+    <meta
+      property="og:title"
+      content="Generador de Memes Gratis Online - Crea y Descarga Memes Personalizados"
+    />
+    <meta
+      property="og:description"
+      content="Crea memes personalizados gratis, sin marcas de agua y descárgalos en segundos. Compatible con móvil y PC."
+    />
+    <meta property="og:image" content="/favicon.png" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://tusitio.com/" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&family=Fredoka:wght@700&family=Comic+Neue:wght@700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      /* Reset básico */
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        font-family: "Poppins", Arial, sans-serif;
+      }
+
+      body,
+      html {
+        min-height: 100vh;
+        width: 100vw;
+        background: linear-gradient(135deg, #ff416c, #ff4b2b);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: white;
+      }
+
+      .container {
+        background: white;
+        max-width: 400px;
+        width: 90vw;
+        padding: 32px 24px 24px 24px;
+        border-radius: 20px;
+        box-shadow: 0 8px 32px rgba(255, 75, 43, 0.18);
+        color: #333;
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+
+      h1 {
+        margin-bottom: 10px;
+        color: #ff416c;
+        font-weight: 900;
+        font-size: 2.6rem;
+        letter-spacing: 0.5px;
+        line-height: 1.1;
+      }
+
+      h2 {
+        font-size: 1.2rem;
+        color: #ff416c;
+        margin-bottom: 6px;
+      }
+
+      .subtitle {
+        font-size: 1.08rem;
+        color: #444;
+        margin-bottom: 18px;
+        margin-top: 2px;
+        font-weight: 500;
+        line-height: 1.4;
+      }
+
+      .canvas-container {
+        position: relative;
+        margin-bottom: 15px;
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+      .canvas-container.no-image {
+        cursor: pointer;
+      }
+      .canvas-upload-btn {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: #fff;
+        border: 2px solid #ff416c;
+        color: #ff416c;
+        border-radius: 14px;
+        padding: 18px 28px 18px 22px;
+        font-size: 1.15rem;
+        font-weight: 700;
+        box-shadow: 0 2px 12px #ff416c22;
+        cursor: pointer;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+        z-index: 3;
+        transition: background 0.2s, color 0.2s;
+      }
+      .canvas-upload-btn:hover {
+        background: #ff416c;
+        color: #fff;
+      }
+      .canvas-upload-btn svg {
+        width: 1.5em;
+        height: 1.5em;
+        display: inline-block;
+        vertical-align: middle;
+      }
+      .canvas-container input[type="file"] {
+        display: none;
+      }
+      .canvas-drop-hint {
+        position: absolute;
+        top: 100%;
+        left: 50%;
+        transform: translate(-50%, 10px);
+        background: rgba(255, 255, 255, 0.92);
+        color: #ff416c;
+        font-size: 1.15rem;
+        font-weight: 700;
+        border-radius: 12px;
+        padding: 10px 22px;
+        z-index: 10;
+        box-shadow: 0 2px 12px #ff416c22;
+        pointer-events: none;
+        display: none;
+      }
+      .canvas-container.no-image .canvas-upload-btn {
+        display: flex !important;
+      }
+      .canvas-container.no-image .canvas-drop-hint {
+        display: block;
+      }
+      .canvas-container.dragover .canvas-drop-hint {
+        display: block;
+        background: #fff0f0;
+      }
+
+      canvas {
+        border: 2px solid #ff416c;
+        border-radius: 12px;
+        max-width: 100%;
+        height: auto;
+        background: #f0f0f0;
+      }
+
+      .text-controls {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 10px;
+        width: 100%;
+        justify-content: center;
+      }
+
+      .text-row {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 10px;
+      }
+      .text-row input[type="text"] {
+        flex: 1;
+        margin-bottom: 0;
+        padding: 12px 10px;
+        border-radius: 10px;
+        border: 2px solid #ff416c;
+        background: #f8f8f8;
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: #222;
+        transition: border 0.2s;
+      }
+      .text-row input[type="text"]:focus {
+        outline: none;
+        border: 2px solid #ff4b2b;
+        background: #fff;
+      }
+      .text-row input[type="color"] {
+        width: 32px;
+        height: 32px;
+        border: none;
+        background: none;
+        padding: 0;
+        cursor: pointer;
+      }
+      .text-row input[type="number"] {
+        width: 48px;
+        padding: 6px;
+        border-radius: 8px;
+        border: 2px solid #ff416c;
+        font-size: 1rem;
+        font-weight: 600;
+        text-align: center;
+      }
+
+      select {
+        padding: 8px;
+        border-radius: 8px;
+        border: 2px solid #ff416c;
+        margin-bottom: 10px;
+      }
+
+      button {
+        width: 100%;
+        background: #ff416c;
+        border: none;
+        padding: 12px;
+        border-radius: 12px;
+        color: white;
+        font-weight: 700;
+        font-size: 1.1rem;
+        cursor: pointer;
+        transition: background 0.3s ease;
+        margin-bottom: 10px;
+      }
+
+      button:hover {
+        background: #ff4b2b;
+      }
+
+      .footer-text {
+        margin-top: 15px;
+        font-size: 0.8rem;
+        color: #777;
+      }
+
+      .text-element {
+        display: none;
+      }
+
+      .canvas-container.dragover canvas {
+        border: 3px dashed #ff416c;
+        background: #ffe3e3;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Generador de Memes</h1>
+      <h2 style="font-size: 1.2rem; color: #ff416c; margin-bottom: 6px">
+        Creador de memes online gratis y fácil
+      </h2>
+      <div class="subtitle">
+        Crea memes fácilmente: sube o pega tu imagen, personaliza el texto y
+        descárgalo o compártelo. Herramienta gratuita, rápida y sin marcas de
+        agua.
+      </div>
+      <div class="canvas-container no-image" id="canvasContainer">
+        <canvas
+          id="memeCanvas"
+          width="320"
+          height="320"
+          aria-label="Área de edición de meme"
+          alt="Creador de memes online"
+          >Tu navegador no soporta canvas.</canvas
+        >
+        <label class="canvas-upload-btn" id="canvasUploadBtn" for="imageLoader">
+          <svg
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+            aria-hidden="true"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M3 16.5V19a2.003 2.003 0 002 2h14a2.003 2.003 0 002-2v-2.5M16 10l-4-4m0 0l-4 4m4-4v12"
+            />
+          </svg>
+          <span>Seleccionar imagen</span>
+        </label>
+        <input type="file" id="imageLoader" accept="image/*" />
+      </div>
+      <div
+        id="canvasDropHintBelow"
+        style="
+          display: none;
+          text-align: center;
+          color: #b0b0b0;
+          font-size: 1.05rem;
+          font-weight: 500;
+          margin-top: 10px;
+        "
+      >
+        Suelta una imagen aquí
+      </div>
+      <div class="text-controls">
+        <select id="fontSelect">
+          <option value="Poppins">Poppins (Bold)</option>
+          <option value="PoppinsNormal">Poppins (Normal)</option>
+          <option value="Fredoka">Fredoka</option>
+          <option value="Comic Neue">Comic Neue</option>
+        </select>
+        <select id="glowSelect" title="Fondo luminoso">
+          <option value="none">Sin fondo</option>
+          <option value="soft">Poco</option>
+          <option value="strong">Mucho</option>
+        </select>
+      </div>
+      <div class="text-row">
+        <input
+          type="text"
+          id="topText"
+          placeholder="Texto superior"
+          maxlength="50"
+        />
+        <input
+          type="color"
+          id="topColor"
+          value="#000000"
+          title="Color texto superior"
+        />
+        <input
+          type="number"
+          id="topSize"
+          value="40"
+          min="20"
+          max="100"
+          title="Tamaño texto superior"
+        />
+      </div>
+      <div class="text-row">
+        <input
+          type="text"
+          id="bottomText"
+          placeholder="Texto inferior"
+          maxlength="50"
+        />
+        <input
+          type="color"
+          id="bottomColor"
+          value="#000000"
+          title="Color texto inferior"
+        />
+        <input
+          type="number"
+          id="bottomSize"
+          value="40"
+          min="20"
+          max="100"
+          title="Tamaño texto inferior"
+        />
+      </div>
+      <button id="downloadBtn">Descargar Meme</button>
+      <button id="shareBtn">Compartir</button>
+      <div class="footer-text">
+        <a href="about.html">Sobre el Proyecto</a>
+        <a href="contact.html">Contacto</a>
+      </div>
+      <div id="ratingBox" style="margin-top: 18px; text-align: center">
+        <div style="font-size: 1.3rem; color: #ffd700; letter-spacing: 2px">
+          ★★★★★
+        </div>
+        <div
+          id="ratingName"
+          style="
+            font-weight: 600;
+            color: #444;
+            font-size: 1.05rem;
+            margin-top: 2px;
+          "
+        ></div>
+        <div
+          id="ratingComment"
+          style="font-size: 0.98rem; color: #666; margin-bottom: 6px"
+        ></div>
+      </div>
+      <div
+        style="
+          font-size: 0.68rem;
+          color: #d1d1d1;
+          margin-top: 8px;
+          line-height: 1.4;
+        "
+      >
+        <strong>¿Qué es un meme?</strong> Un meme es una imagen, video o frase
+        que se difunde rápidamente en internet, generalmente con fines
+        humorísticos o sociales. Aprende más en
+        <a
+          href="https://es.wikipedia.org/wiki/Meme"
+          target="_blank"
+          rel="noopener"
+          style="color: #d1d1d1; text-decoration: underline"
+          >Wikipedia</a
+        >.<br />
+        Este generador de memes es compatible con dispositivos móviles y de
+        escritorio. No requiere registro y respeta tu privacidad.<br />
+        <strong>Palabras clave:</strong> generador de memes, crear memes, memes
+        online, memes gratis, meme generator, descargar memes, memes
+        personalizados.
+      </div>
+      <div
+        id="shareModal"
+        style="
+          display: none;
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100vw;
+          height: 100vh;
+          background: rgba(0, 0, 0, 0.4);
+          justify-content: center;
+          align-items: center;
+          z-index: 9999;
+        "
+      >
+        <div
+          style="
+            background: white;
+            border-radius: 24px;
+            padding: 36px 20px 28px 20px;
+            max-width: 380px;
+            width: 95vw;
+            text-align: center;
+            box-shadow: 0 8px 32px rgba(255, 75, 43, 0.18);
+            position: relative;
+          "
+        >
+          <button
+            id="closeModal"
+            aria-label="Cerrar"
+            style="
+              position: absolute;
+              top: 14px;
+              right: 14px;
+              background: none;
+              border: none;
+              font-size: 1.6rem;
+              color: #ff416c;
+              cursor: pointer;
+              font-weight: 700;
+              line-height: 1;
+              width: 36px;
+              height: 36px;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              z-index: 2;
+            "
+          >
+            &times;
+          </button>
+          <h2
+            style="
+              color: #ff416c;
+              font-size: 2rem;
+              margin-bottom: 18px;
+              font-weight: 900;
+              letter-spacing: 0.5px;
+            "
+          >
+            Comparte tu Meme
+          </h2>
+          <div style="font-size: 1.08rem; color: #444; margin-bottom: 10px">
+            Copia la imagen o compártela en tus redes sociales favoritas.
+          </div>
+          <img
+            id="modalMemeImg"
+            src=""
+            alt="Meme generado"
+            style="
+              width: 100%;
+              border-radius: 12px;
+              margin-bottom: 14px;
+              box-shadow: 0 2px 12px #ff416c22;
+            "
+          />
+          <button
+            id="copyImgBtn"
+            style="
+              width: 100%;
+              background: #ff416c;
+              color: white;
+              border: none;
+              border-radius: 10px;
+              padding: 13px;
+              margin-bottom: 14px;
+              font-size: 1.1rem;
+              font-weight: 700;
+              cursor: pointer;
+              transition: background 0.2s;
+            "
+          >
+            Copiar Imagen
+          </button>
+          <div
+            id="copiedMsg"
+            style="
+              display: none;
+              color: #43c463;
+              font-weight: 700;
+              font-size: 1.05rem;
+              margin-bottom: 10px;
+            "
+          >
+            ¡Imagen copiada!
+          </div>
+          <div
+            style="
+              display: flex;
+              gap: 12px;
+              justify-content: center;
+              margin-top: 8px;
+            "
+          >
+            <a
+              id="waShare"
+              target="_blank"
+              style="
+                background: #25d366;
+                color: white;
+                border-radius: 9px;
+                padding: 11px 18px;
+                text-decoration: none;
+                font-size: 1.15rem;
+                font-weight: 700;
+              "
+              >WhatsApp</a
+            >
+            <a
+              id="fbShare"
+              target="_blank"
+              style="
+                background: #4267b2;
+                color: white;
+                border-radius: 9px;
+                padding: 11px 18px;
+                text-decoration: none;
+                font-size: 1.15rem;
+                font-weight: 700;
+              "
+              >Facebook</a
+            >
+            <a
+              id="xShare"
+              target="_blank"
+              style="
+                background: #222;
+                color: white;
+                border-radius: 9px;
+                padding: 11px 18px;
+                text-decoration: none;
+                font-size: 1.15rem;
+                font-weight: 700;
+              "
+              >X</a
+            >
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const imageLoader = document.getElementById("imageLoader");
+      const canvas = document.getElementById("memeCanvas");
+      const ctx = canvas.getContext("2d");
+      const topTextInput = document.getElementById("topText");
+      const bottomTextInput = document.getElementById("bottomText");
+      const downloadBtn = document.getElementById("downloadBtn");
+      const shareBtn = document.getElementById("shareBtn");
+      const fontSelect = document.getElementById("fontSelect");
+      const glowSelect = document.getElementById("glowSelect");
+      const topColor = document.getElementById("topColor");
+      const bottomColor = document.getElementById("bottomColor");
+      const topSize = document.getElementById("topSize");
+      const bottomSize = document.getElementById("bottomSize");
+
+      let img = new Image();
+      let textElements = [
+        {
+          text: "",
+          x: 160,
+          y: 50,
+          font: "Poppins",
+          fontSize: 40,
+          color: "#000000",
+          glow: "none",
+          dragging: false,
+        },
+        {
+          text: "",
+          x: 160,
+          y: 270,
+          font: "Poppins",
+          fontSize: 40,
+          color: "#000000",
+          glow: "none",
+          dragging: false,
+        },
+      ];
+
+      let lastImageSrc = "";
+      function updateUploadBtn() {
+        const hasImage =
+          !!img.src &&
+          img.src !== window.location.href &&
+          img.src !== "" &&
+          img.src !== lastImageSrc;
+        if (hasImage) {
+          canvasUploadBtn.style.display = "none";
+          canvasContainer.classList.remove("no-image");
+          document.getElementById("canvasDropHintBelow").style.display = "none";
+          lastImageSrc = img.src;
+        } else {
+          canvasUploadBtn.style.display = "flex";
+          canvasContainer.classList.add("no-image");
+          document.getElementById("canvasDropHintBelow").style.display =
+            "block";
+        }
+      }
+
+      function getContrastStroke(color) {
+        // color: #rrggbb
+        const r = parseInt(color.substr(1, 2), 16);
+        const g = parseInt(color.substr(3, 2), 16);
+        const b = parseInt(color.substr(5, 2), 16);
+        // Luminancia
+        const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+        return luminance > 0.5 ? "#222" : "#fff";
+      }
+
+      function drawMeme() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        if (img.src) {
+          let scale = Math.min(
+            canvas.width / img.width,
+            canvas.height / img.height
+          );
+          let x = canvas.width / 2 - (img.width / 2) * scale;
+          let y = canvas.height / 2 - (img.height / 2) * scale;
+          ctx.drawImage(img, x, y, img.width * scale, img.height * scale);
+        } else {
+          ctx.fillStyle = "#ccc";
+          ctx.fillRect(0, 0, canvas.width, canvas.height);
+        }
+        textElements.forEach((element) => {
+          if (!element.text) return;
+          let fontWeight = element.font === "PoppinsNormal" ? "400" : "700";
+          let fontFamily =
+            element.font === "PoppinsNormal" ? "Poppins" : element.font;
+          ctx.save();
+          ctx.font = `${fontWeight} ${element.fontSize}px '${fontFamily}', 'Poppins', Arial, sans-serif`;
+          ctx.textAlign = "center";
+          ctx.textBaseline = "middle";
+          // Glow effect
+          if (element.glow === "soft") {
+            ctx.shadowColor = element.color;
+            ctx.shadowBlur = 10;
+          } else if (element.glow === "strong") {
+            ctx.shadowColor = element.color;
+            ctx.shadowBlur = 28;
+          } else {
+            ctx.shadowBlur = 0;
+          }
+          ctx.fillStyle = element.color;
+          ctx.fillText(element.text, element.x, element.y);
+          ctx.restore();
+        });
+      }
+
+      imageLoader.addEventListener("change", function (e) {
+        if (imageLoader.files && imageLoader.files[0]) {
+          const file = imageLoader.files[0];
+          const reader = new FileReader();
+          reader.onload = function (event) {
+            img.onload = function () {
+              drawMeme();
+              updateUploadBtn();
+            };
+            img.src = event.target.result;
+          };
+          reader.readAsDataURL(file);
+        } else {
+          updateUploadBtn();
+        }
+      });
+
+      document.addEventListener("paste", function (e) {
+        const items = e.clipboardData.items;
+        for (let i = 0; i < items.length; i++) {
+          if (items[i].type.indexOf("image") !== -1) {
+            const file = items[i].getAsFile();
+            const reader = new FileReader();
+            reader.onload = function (event) {
+              img.onload = function () {
+                drawMeme();
+              };
+              img.src = event.target.result;
+            };
+            reader.readAsDataURL(file);
+            break;
+          }
+        }
+      });
+
+      function updateText() {
+        textElements[0].text = topTextInput.value;
+        textElements[0].font = fontSelect.value;
+        textElements[0].fontSize = parseInt(topSize.value);
+        textElements[0].color = topColor.value;
+        textElements[0].glow = glowSelect.value;
+        textElements[1].text = bottomTextInput.value;
+        textElements[1].font = fontSelect.value;
+        textElements[1].fontSize = parseInt(bottomSize.value);
+        textElements[1].color = bottomColor.value;
+        textElements[1].glow = glowSelect.value;
+        drawMeme();
+      }
+
+      topTextInput.addEventListener("input", updateText);
+      bottomTextInput.addEventListener("input", updateText);
+      fontSelect.addEventListener("change", updateText);
+      glowSelect.addEventListener("change", updateText);
+      topColor.addEventListener("input", updateText);
+      bottomColor.addEventListener("input", updateText);
+      topSize.addEventListener("input", updateText);
+      bottomSize.addEventListener("input", updateText);
+
+      downloadBtn.addEventListener("click", function () {
+        drawMeme();
+        const link = document.createElement("a");
+        link.download = "meme.png";
+        link.href = canvas.toDataURL();
+        link.click();
+      });
+
+      shareBtn.addEventListener("click", function () {
+        drawMeme();
+        const modal = document.getElementById("shareModal");
+        const modalImg = document.getElementById("modalMemeImg");
+        const dataUrl = canvas.toDataURL("image/png");
+        modalImg.src = dataUrl;
+        const text = encodeURIComponent(
+          "¡Mira el meme que creé en el Generador de Memes!"
+        );
+        document.getElementById(
+          "waShare"
+        ).href = `https://wa.me/?text=${text}%20${encodeURIComponent(dataUrl)}`;
+        document.getElementById(
+          "fbShare"
+        ).href = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(
+          dataUrl
+        )}`;
+        document.getElementById(
+          "xShare"
+        ).href = `https://twitter.com/intent/tweet?text=${text}&url=${encodeURIComponent(
+          dataUrl
+        )}`;
+        modal.style.display = "flex";
+      });
+
+      document.getElementById("closeModal").onclick = function () {
+        document.getElementById("shareModal").style.display = "none";
+      };
+
+      const copyImgBtn = document.getElementById("copyImgBtn");
+      const copiedMsg = document.getElementById("copiedMsg");
+      copyImgBtn.onclick = async function () {
+        try {
+          const blob = await (
+            await fetch(document.getElementById("modalMemeImg").src)
+          ).blob();
+          await navigator.clipboard.write([
+            new window.ClipboardItem({ [blob.type]: blob }),
+          ]);
+          copiedMsg.style.display = "block";
+          copyImgBtn.disabled = true;
+          setTimeout(() => {
+            copiedMsg.style.display = "none";
+            copyImgBtn.disabled = false;
+          }, 1500);
+        } catch (e) {
+          copiedMsg.textContent = "No se pudo copiar la imagen";
+          copiedMsg.style.color = "#ff416c";
+          copiedMsg.style.display = "block";
+          setTimeout(() => {
+            copiedMsg.style.display = "none";
+            copiedMsg.style.color = "#43c463";
+            copiedMsg.textContent = "¡Imagen copiada!";
+          }, 1800);
+        }
+      };
+
+      // Drag and drop sobre canvas
+      let draggingIdx = null;
+      let dragOffsetX = 0;
+      let dragOffsetY = 0;
+      canvas.addEventListener("mousedown", function (e) {
+        const rect = canvas.getBoundingClientRect();
+        const mouseX = e.clientX - rect.left;
+        const mouseY = e.clientY - rect.top;
+        for (let i = 0; i < textElements.length; i++) {
+          const el = textElements[i];
+          if (!el.text) continue;
+          ctx.font = `${el.fontSize}px '${el.font}', 'Poppins', Arial, sans-serif`;
+          const textWidth = ctx.measureText(el.text).width;
+          const textHeight = el.fontSize;
+          if (
+            mouseX > el.x - textWidth / 2 &&
+            mouseX < el.x + textWidth / 2 &&
+            mouseY > el.y - textHeight / 2 &&
+            mouseY < el.y + textHeight / 2
+          ) {
+            draggingIdx = i;
+            dragOffsetX = mouseX - el.x;
+            dragOffsetY = mouseY - el.y;
+            return;
+          }
+        }
+      });
+      canvas.addEventListener("mousemove", function (e) {
+        if (draggingIdx !== null) {
+          const rect = canvas.getBoundingClientRect();
+          const mouseX = e.clientX - rect.left;
+          const mouseY = e.clientY - rect.top;
+          textElements[draggingIdx].x = mouseX - dragOffsetX;
+          textElements[draggingIdx].y = mouseY - dragOffsetY;
+          drawMeme();
+        }
+      });
+      canvas.addEventListener("mouseup", function () {
+        draggingIdx = null;
+      });
+      canvas.addEventListener("mouseleave", function () {
+        draggingIdx = null;
+      });
+
+      // Drag & Drop de imagen sobre canvas
+      const canvasContainer = document.getElementById("canvasContainer");
+      const canvasUploadBtn = document.getElementById("canvasUploadBtn");
+      const canvasDropHint = document.getElementById("canvasDropHint");
+
+      img.onload = function () {
+        drawMeme();
+        updateUploadBtn();
+      };
+      window.addEventListener("paste", function (e) {
+        setTimeout(function () {
+          drawMeme();
+          updateUploadBtn();
+        }, 100);
+      });
+      canvasContainer.addEventListener("drop", function (e) {
+        setTimeout(function () {
+          drawMeme();
+          updateUploadBtn();
+        }, 100);
+      });
+
+      // Valoración aleatoria
+      const ratingNames = [
+        "Ana G.",
+        "Carlos M.",
+        "Lucía P.",
+        "Jorge R.",
+        "Valentina S.",
+        "Pedro T.",
+        "Sofía L.",
+        "Martín D.",
+        "Camila V.",
+        "David F.",
+      ];
+      const ratingComments = [
+        "¡Muy fácil de usar y sin marcas de agua!",
+        "El mejor generador de memes online, lo recomiendo.",
+        "Me encanta la opción de personalizar el texto y compartir.",
+        "Funciona perfecto en mi celular y es gratis.",
+        "¡Rápido, intuitivo y divertido!",
+        "Ideal para crear memes en segundos.",
+        "Excelente herramienta, la uso siempre.",
+        "¡Por fin un generador de memes sin complicaciones!",
+        "Muy recomendable para todos los que aman los memes.",
+        "La mejor experiencia para crear memes personalizados.",
+      ];
+      function randomItem(arr) {
+        return arr[Math.floor(Math.random() * arr.length)];
+      }
+      document.getElementById("ratingName").textContent =
+        randomItem(ratingNames);
+      document.getElementById("ratingComment").textContent =
+        randomItem(ratingComments);
+
+      drawMeme();
+    </script>
+  </body>
+</html>
